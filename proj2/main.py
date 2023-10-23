@@ -30,4 +30,7 @@ for person in [a, b, c]:
     # Not using threads as only doing one at a time increases chances our program does not run into race condition issues
     person.send_values(list(map(lambda person: person.port, people)))
 
-time.sleep(10) # Allow all working daemon threads to finish
+
+time.sleep(2)
+# "God" is an entity that writes debug statements and does not interfere in the algorithm but lets the observer know the expected values
+print(f"God: The (secret) heights are {a.height}, {b.height} and {c.height} giving a total of {sum([a.height, b.height, c.height])}")

@@ -26,9 +26,7 @@ class Person:
         
     def serve(self):
         ctx, server_socket = serve_on_port(self.port)
-        
-        print(f"{self.name}: Serving on {self.port}")
-        
+                
         # Receive from 2 other people, could be n for scalability
         for _ in range(2):
             # Accept incoming connections
@@ -50,7 +48,6 @@ class Person:
     # Send sum of all values to hospital
     def send_aggregate_value(self):
         aggregate_value = sum(self.values)
-        print(f"TEST: Length of values for {self.name}: {len(self.values)}")
         print(f'{self.name}: I have calculated the aggregate value',  aggregate_value)
 
         hospital = connect(9000)
