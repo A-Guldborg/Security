@@ -10,13 +10,14 @@ class Hospital:
         threading.Thread(target=self.serve, daemon=False).start()
     
     def serve(self):
-        ctx, sock = serve_on_port(self.port)
+        sock = serve_on_port(self.port)
         
         for _ in range(3):
-            client_socket, _ = sock.accept()
-            bytes = client_socket.recv(4)
+            client_tls_socket, _ = sock.accept()
+            
+            bytes = client_tls_socket.recv(4)
             self.rec_value(struct.unpack("!i", bytes)[0])
-            client_socket.close()
+            client_tls_socket.close()
             
     # Receiving values from people
     def rec_value(self, value):

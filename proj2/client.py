@@ -25,20 +25,17 @@ class Person:
         return vals 
         
     def serve(self):
-        ctx, server_socket = serve_on_port(self.port)
+        server_socket = serve_on_port(self.port)
                 
         # Receive from 2 other people, could be n for scalability
         for _ in range(2):
             # Accept incoming connections
-            client_socket, _ = server_socket.accept()
-            
-            # Wrap sockets in TLS context
-            # client_ssl_socket = ctx.wrap_socket(client_socket)
-            
-            incoming_bytes = client_socket.recv(4)
+            client_tls_socket, _ = server_socket.accept()
+                        
+            incoming_bytes = client_tls_socket.recv(4)
             
             # Each connection is only responsible for sending one value
-            client_socket.close()
+            client_tls_socket.close()
             
             incoming_value = struct.unpack("!i", incoming_bytes)[0]
             self.values.append(incoming_value)
@@ -55,6 +52,10 @@ class Person:
         # Convert int to ReadableBuffer
         data = struct.pack("!i", aggregate_value)
         hospital.send(data)
+        
+        # Allow time for server to receive data before closing socket from client side
+        time.sleep(1)
+        hospital.close()
     
     # Send part of height to two other people
     def send_values(self, receivers):
@@ -69,3 +70,7 @@ class Person:
             byte_value = struct.pack("!i", vals[idx])
             
             socket.send(byte_value)
+            
+            # Give peer person time to receive data before closing socket from client_side
+            time.sleep(1)
+            socket.close()
