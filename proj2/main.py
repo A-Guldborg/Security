@@ -16,7 +16,7 @@ c = Person("Charlie", port=9003)
 
 # Start serving servers for all people
 for person in [a, b, c]:
-    thread = threading.Thread(target=person.serve, daemon=True)
+    thread = threading.Thread(target=person.serve)
     thread.start()
 
 time.sleep(2) # Allow people to setup communication sockets

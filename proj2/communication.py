@@ -25,4 +25,4 @@ def connect(port):
     
     sock.connect(("localhost", port))
     
-    return context.wrap_socket(sock, server_hostname="localhost")
+    return context.wrap_socket(sock)
