@@ -1,5 +1,3 @@
-TLS encryption on each individual computation to the hospital, so an adversary (Dolev Yao) cannot reconstruct the data in the same way as the Hospital.
-
 # Security mini project 2
 
 Made by Andreas Guldborg Hansen
@@ -14,9 +12,35 @@ Furthermore a certificate must be generated. We use the same certificate/key pai
 
 After generating the `.pem`-files, run the program with `python3 .\main.py`
 
+This will give a terminal output for multiple threads. Each client will announce:
+- their secret value (for debugging, ofc!)
+- Every value they send and the target port
+- The aggregate sum of the received values plus their own share
+
+Likewise, the hospital announces when they receive a value and when they have calculated the aggregate sum.
+
+Lastly, the God of TLS announces the three (secret) heights and their sum (for easy debugging purposes, ofc!)
+
 ## Building blocks
 
+### Threads
+
+To be easy to run the program, I have defined a main file which handles creating threads for one hospital and three clients, and once they host a server, then the main program also asks all three clients to start the aggregate computing algorithm. To utilize threads I use the `threading` module.
+
+Likewise, hosting servers happens on threads (so a thread starts a client, but the client thread spawns a new thread hosting the server). The server-hosting threads are responsible to listen for incoming communications, such that we do not need to consider the order of who sends values when.
+
+By having threads only accept one incoming connection (socket) at a time, and closing this connection before accepting a new, then the program is thread-safe by not trying to read and/or write to the aggregate values/shares that they receive during the algorithm.
+
 ### TLS
+
+Using the `ssl` and `socket` modules from python, my solution implements the TLS protocol.
+TLS ensures encryption, authentication and integrity, though by using self-signing certificates the "authentication" part is not quite true - only in the context of our own certificate chain (which has length 1). As we host all clients on the same machine, for practical reasons the solution only uses one pair of certificate and key files but in a real world example on an actually distributed network over the internet would have had seperate pairs for each node (i.e. each client and hospital).
+
+To create a socket in python for hosting with TLS, we create a standard socket and an sslcontext with the `ssl.PROTOCOL_TLS_SERVER` protocol and our certificate/key pair. Finally we use the sslcontext to wrap "around" the socket, such that we now have a socket that uses TLS.
+
+To create a socket to be used for connecting to a server, we also create a standard socket that we can connect to the host server, and where the context is similar to the server-context but also specifying that we do not care about the servername and verification of the certificate (thus allowing self-signed certificates) before wrapping the socket in the TLS client protocol.
+
+Then we can use the standard features of the socket library to send and receive values as data.
 
 ### Aggregate Computing (Secure Multiparty Communication)
 
