@@ -44,8 +44,7 @@ Then we can use the standard features of the socket library to send and receive 
 
 ### Aggregate Computing (Secure Multiparty Communication)
 
-Each person, Alice, Bob and Charlie, splits their height (sensitive data) into three parts such that part 1, 2 and 3 sums to the height.
-They then keep one part to themselves and sends the two parts to the other people, one to each.
+Each person, Alice, Bob and Charlie, creates two (n-1) random shares in the field `p=210`, and a third share they keep secret which is their height minus the sum of the first two random shares. This means that shares 1, 2 and 3 add up to the height of the person. They then send the first two shares, one to each other person.
 
 Thus we have Alice's height as a_1, a_2 and a_3, and likewise with b_1..3 and c_1..3 for Bob and Charlie.
 

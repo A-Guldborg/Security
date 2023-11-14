@@ -4,6 +4,8 @@ import time
 
 from communication import serve_on_port, connect
 
+p = 210
+
 class Person:
     def __init__(self, name, port):
         self.port = port
@@ -17,11 +19,10 @@ class Person:
     def split_into_n(self, value, n):
         vals = []
         for _ in range(n-1):
-            val = randint(0, value)
+            val = randint(0, p)
             vals.append(val)
-            value -= val
             
-        self.received_values.append(value) # add remaining value to own values array
+        self.received_values.append(value - sum(vals)) # add remaining value to own values array
 
         return vals 
         
